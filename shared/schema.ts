@@ -5,6 +5,7 @@ export const comparisonOptionsSchema = z.object({
   mode: z.enum(["word", "character"]),
   caseSensitive: z.boolean(),
   considerPunctuation: z.boolean(),
+  considerWhitespace: z.boolean(),
 });
 
 export type ComparisonOptions = z.infer<typeof comparisonOptionsSchema>;

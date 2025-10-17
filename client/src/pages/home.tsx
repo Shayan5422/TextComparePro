@@ -15,6 +15,7 @@ export default function Home() {
     mode: "word",
     caseSensitive: false,
     considerPunctuation: true,
+    considerWhitespace: true,
   });
   const [result, setResult] = useState<ComparisonResult | null>(null);
 

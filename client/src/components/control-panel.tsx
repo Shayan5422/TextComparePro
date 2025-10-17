@@ -1,7 +1,7 @@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Type, Hash, LetterText, Triangle } from "lucide-react";
+import { Type, Hash, LetterText, Triangle, Space } from "lucide-react";
 import type { ComparisonOptions } from "@shared/schema";
 
 interface ControlPanelProps {
@@ -101,15 +101,31 @@ export function ControlPanel({ options, onOptionsChange }: ControlPanelProps) {
           />
         </div>
 
-        <div className="flex items-center justify-center p-3 rounded-md bg-muted/50">
-          <div className="flex flex-col gap-0.5 text-center">
-            <span className="text-sm font-medium text-foreground">
-              Ready to Compare
-            </span>
-            <span className="text-xs text-muted-foreground">
-              Configure options
-            </span>
+        <div className="flex items-center justify-between space-x-3 p-3 rounded-md hover-elevate">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-chart-4/10 text-chart-4">
+              <Space className="h-4 w-4" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <Label
+                htmlFor="whitespace-toggle"
+                className="text-sm font-medium cursor-pointer"
+              >
+                Whitespace
+              </Label>
+              <span className="text-xs text-muted-foreground">
+                Include spaces
+              </span>
+            </div>
           </div>
+          <Switch
+            id="whitespace-toggle"
+            checked={options.considerWhitespace}
+            onCheckedChange={(checked) =>
+              onOptionsChange({ ...options, considerWhitespace: checked })
+            }
+            data-testid="switch-whitespace"
+          />
         </div>
       </div>
     </Card>

@@ -22,6 +22,10 @@ function normalizeText(text: string, options: ComparisonOptions): string {
     normalized = normalized.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?\[\]"']/g, "");
   }
 
+  if (!options.considerWhitespace) {
+    normalized = normalized.replace(/\s+/g, "");
+  }
+
   return normalized;
 }
 
@@ -66,7 +70,8 @@ function splitIntoTokens(
 
 function longestCommonSubsequence(
   arr1: TokenUnit[],
-  arr2: TokenUnit[]
+  arr2: TokenUnit[],
+  considerWhitespace: boolean
 ): number[][] {
   const m = arr1.length;
   const n = arr2.length;
@@ -76,7 +81,15 @@ function longestCommonSubsequence(
 
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
-      if (arr1[i - 1].normalized === arr2[j - 1].normalized) {
+      const token1 = arr1[i - 1];
+      const token2 = arr2[j - 1];
+      
+      // If considerWhitespace is false, treat all whitespace as equal
+      const isMatch = considerWhitespace
+        ? token1.normalized === token2.normalized
+        : (token1.isWhitespace && token2.isWhitespace) || token1.normalized === token2.normalized;
+      
+      if (isMatch) {
         dp[i][j] = dp[i - 1][j - 1] + 1;
       } else {
         dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
@@ -97,18 +110,24 @@ function generateDiffOperations(
   arr1: TokenUnit[],
   arr2: TokenUnit[],
   dp: number[][],
-  considerPunctuation: boolean
+  considerPunctuation: boolean,
+  considerWhitespace: boolean
 ): DiffOperation[] {
   const operations: DiffOperation[] = [];
   let i = arr1.length;
   let j = arr2.length;
 
   while (i > 0 || j > 0) {
-    if (
-      i > 0 &&
-      j > 0 &&
-      arr1[i - 1].normalized === arr2[j - 1].normalized
-    ) {
+    const token1 = i > 0 ? arr1[i - 1] : undefined;
+    const token2 = j > 0 ? arr2[j - 1] : undefined;
+    
+    // Check if tokens match
+    const isMatch = token1 && token2 && (
+      token1.normalized === token2.normalized ||
+      (!considerWhitespace && token1.isWhitespace && token2.isWhitespace)
+    );
+    
+    if (isMatch) {
       operations.unshift({
         type: "match",
         token1: arr1[i - 1],
@@ -254,9 +273,15 @@ export function compareTexts(
   const tokens1 = splitIntoTokens(text1, options.mode, options);
   const tokens2 = splitIntoTokens(text2, options.mode, options);
 
-  const dp = longestCommonSubsequence(tokens1, tokens2);
+  const dp = longestCommonSubsequence(tokens1, tokens2, options.considerWhitespace);
 
-  const operations = generateDiffOperations(tokens1, tokens2, dp, options.considerPunctuation);
+  const operations = generateDiffOperations(
+    tokens1, 
+    tokens2, 
+    dp, 
+    options.considerPunctuation,
+    options.considerWhitespace
+  );
 
   const { segments1, segments2 } = operationsToDiffSegments(operations);
 

@@ -92,8 +92,8 @@
   --spacing: 0.25rem;
 
   /* Diff colors for text comparison */
-  --diff-match: 142 71% 45%;
-  --diff-match-bg: 142 50% 96%;
+  --diff-match: 210 100% 45%;
+  --diff-match-bg: 210 100% 95%;
   --diff-addition: 142 76% 36%;
   --diff-addition-bg: 142 50% 92%;
   --diff-deletion: 0 72% 51%;
@@ -215,8 +215,8 @@
   --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 0% / 0.6);
 
   /* Diff colors for text comparison */
-  --diff-match: 142 71% 55%;
-  --diff-match-bg: 142 40% 18%;
+  --diff-match: 210 100% 65%;
+  --diff-match-bg: 210 50% 20%;
   --diff-addition: 142 76% 46%;
   --diff-addition-bg: 142 40% 20%;
   --diff-deletion: 0 72% 61%;
